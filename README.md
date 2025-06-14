@@ -1,23 +1,22 @@
 # Tailwind CSS CLI as a Go Tool
 
-A dead simple way to run [Tailwind CSS](https://tailwindcss.com/) CLI as a Go tool.
+A dead simple way to run Tailwind CSS standalone CLI using `go tool` [released with Go 1.2.4](https://tip.golang.org/doc/go1.24#tools).
 
-No more **Node.JS**. No more **manual downloads of the CLI**.
+No more **Node.JS**. No more **manual downloads**.
 
-## Install
+## Usage
 
-```bash
-go get -tool github.com/scriptogre/tailwindcss-go-tool@latest
-```
+1. Install it:
+   ```bash
+   go get -tool github.com/scriptogre/tailwindcss-go-tool@latest
+   ```
 
-## Use
-
-1. Create `input.css` in your project:
+2. Create `input.css` in your project:
    ```css
    @import 'tailwindcss';
    ```
 
-2. Run TailwindCSS:
+3. Run it:
    ```bash
    go tool tailwindcss -i input.css -o output.css --watch
    ```
