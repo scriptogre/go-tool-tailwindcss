@@ -7,7 +7,7 @@ No more **Node.JS**. No more **manual downloads of the CLI**.
 ## Install
 
 ```bash
-go get -tool github.com/scriptogre/go-tool-tailwindcss@latest
+go get -tool github.com/scriptogre/tailwindcss-go-tool@latest
 ```
 
 ## Use
@@ -24,4 +24,4 @@ go get -tool github.com/scriptogre/go-tool-tailwindcss@latest
 
 That's it!
 
-**Note:** Downloaded TailwindCSS binary is cached in `~/.cache/go-tool-tailwindcss/`
+**Note:** Downloaded TailwindCSS binary is cached in `~/.cache/tailwindcss-go-tool/`

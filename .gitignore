@@ -1,5 +1,5 @@
 # Built binary
-go-tool-tailwindcss
+tailwindcss-go-tool
 
 # Go build cache
 *.sum

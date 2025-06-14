@@ -38,7 +38,7 @@ func getTailwindBinary() (string, error) {
 		return "", fmt.Errorf("could not get home directory: %w", err)
 	}
 
-	cacheDir := filepath.Join(homeDir, ".cache", "go-tool-tailwindcss")
+	cacheDir := filepath.Join(homeDir, ".cache", "tailwindcss-go-tool")
 	binaryPath := filepath.Join(cacheDir, "tailwindcss")
 	if runtime.GOOS == "windows" {
 		binaryPath += ".exe"

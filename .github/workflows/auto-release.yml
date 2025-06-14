@@ -60,7 +60,7 @@ jobs:
             
             ## Usage
             ```bash
-            go get -tool github.com/scriptogre/go-tool-tailwindcss@${{ steps.check-version.outputs.tailwind_version }}
+            go get -tool github.com/scriptogre/tailwindcss-go-tool@${{ steps.check-version.outputs.tailwind_version }}
             go tool tailwindcss --help
             ```
             
