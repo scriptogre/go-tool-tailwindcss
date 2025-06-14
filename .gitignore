@@ -1,8 +1,5 @@
 # Built binary
-tailwindcss
-
-# Downloaded TailwindCSS binary (downloaded at build time)
-tailwindcss-binary
+go-tool-tailwindcss
 
 # Go build cache
 *.sum
