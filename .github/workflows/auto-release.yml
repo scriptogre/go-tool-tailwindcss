@@ -1,0 +1,71 @@
+name: Auto Release
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # daily at 00:00 UTC
+  workflow_dispatch:     # manual trigger via `Actions` tab
+
+jobs:
+  auto-release:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # fetch all tags
+
+      - name: Fetch latest TailwindCSS release
+        id: get-latest-release
+        uses: pozetroninc/github-action-get-latest-release@v0.8.0
+        with:
+          repository: tailwindlabs/tailwindcss
+
+      - name: Check if we already have this version
+        id: check-version
+        run: |
+          # Get TailwindCSS version (e.g. "v4.1.7")
+          tailwind_version="${{ steps.get-latest-release.outputs.release }}"
+          echo "tailwind_version=${tailwind_version}" >> $GITHUB_OUTPUT
+          
+          # Check if we already have a tag for this version
+          if git tag -l | grep -q "^${tailwind_version}$"; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "Tag ${tailwind_version} already exists"
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "Tag ${tailwind_version} does not exist, will create"
+          fi
+
+      - name: Create and push new tag
+        if: steps.check-version.outputs.exists == 'false'
+        run: |
+          version="${{ steps.check-version.outputs.tailwind_version }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "${version}" -m "Auto-release for TailwindCSS ${version}"
+          git push origin "${version}"
+
+      - name: Create GitHub Release
+        if: steps.check-version.outputs.exists == 'false'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.check-version.outputs.tailwind_version }}
+          name: ${{ steps.check-version.outputs.tailwind_version }}
+          body: |
+            Automatic release for TailwindCSS ${{ steps.check-version.outputs.tailwind_version }}
+            
+            ## Usage
+            ```bash
+            go get -tool github.com/scriptogre/go-tool-tailwindcss@${{ steps.check-version.outputs.tailwind_version }}
+            go tool tailwindcss --help
+            ```
+            
+            This version includes TailwindCSS CLI ${{ steps.check-version.outputs.tailwind_version }}.
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
