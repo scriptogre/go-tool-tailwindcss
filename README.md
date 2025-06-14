@@ -1,4 +1,4 @@
-# go tool tailwindcss
+# Tailwind CSS CLI as a Go Tool
 
 A dead simple way to run [Tailwind CSS](https://tailwindcss.com/) CLI as a Go tool.
 
@@ -22,4 +22,6 @@ go get -tool github.com/scriptogre/go-tool-tailwindcss@latest
    go tool tailwindcss -i input.css -o output.css --watch
    ```
 
-That's it. `go tool` makes sure the TailwindCSS CLI is cached after the first run.
+That's it!
+
+**Note:** Downloaded TailwindCSS binary is cached in `~/.cache/go-tool-tailwindcss/`
