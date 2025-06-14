@@ -24,47 +24,61 @@ jobs:
         with:
           repository: tailwindlabs/tailwindcss
 
-      - name: Check if we already have this version
-        id: check-version
+      - name: Strip leading "v" from version
+        id: strip-v
         run: |
           # Get TailwindCSS version (e.g. "v4.1.7")
           tailwind_version="${{ steps.get-latest-release.outputs.release }}"
-          echo "tailwind_version=${tailwind_version}" >> $GITHUB_OUTPUT
-          
-          # Check if we already have a tag for this version
-          if git tag -l | grep -q "^${tailwind_version}$"; then
+          # Remove leading "v" (e.g. "4.1.7")
+          clean_version="${tailwind_version#v}"
+          echo "full_version=${tailwind_version}" >> $GITHUB_OUTPUT
+          echo "clean_version=${clean_version}" >> $GITHUB_OUTPUT
+
+      - name: Check if we already have this version
+        id: check-version
+        run: |
+          # Check if we already have a tag for this version (without "v")
+          version="${{ steps.strip-v.outputs.clean_version }}"
+          if git tag -l | grep -q "^${version}$"; then
             echo "exists=true" >> $GITHUB_OUTPUT
-            echo "Tag ${tailwind_version} already exists"
+            echo "Tag ${version} already exists"
           else
             echo "exists=false" >> $GITHUB_OUTPUT
-            echo "Tag ${tailwind_version} does not exist, will create"
+            echo "Tag ${version} does not exist, will create"
           fi
 
       - name: Create and push new tag
         if: steps.check-version.outputs.exists == 'false'
         run: |
-          version="${{ steps.check-version.outputs.tailwind_version }}"
+          version="${{ steps.strip-v.outputs.clean_version }}"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag -a "${version}" -m "Auto-release for TailwindCSS ${version}"
+          git tag -a "${version}" -m "Auto-release for TailwindCSS ${{ steps.strip-v.outputs.full_version }}"
           git push origin "${version}"
 
       - name: Create GitHub Release
         if: steps.check-version.outputs.exists == 'false'
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ steps.check-version.outputs.tailwind_version }}
-          name: ${{ steps.check-version.outputs.tailwind_version }}
+          tag_name: ${{ steps.strip-v.outputs.clean_version }}
+          name: ${{ steps.strip-v.outputs.full_version }}
           body: |
-            Automatic release for TailwindCSS ${{ steps.check-version.outputs.tailwind_version }}
+            Automatic Go Tool release for TailwindCSS ${{ steps.strip-v.outputs.full_version }} standalone CLI.
             
-            ## Usage
-            ```bash
-            go get -tool github.com/scriptogre/tailwindcss-go-tool@${{ steps.check-version.outputs.tailwind_version }}
-            go tool tailwindcss --help
-            ```
+            1. Install it:
+              ```bash
+              go get -tool github.com/scriptogre/tailwindcss-go-tool@${{ steps.strip-v.outputs.clean_version }}
+              ```
             
-            This version includes TailwindCSS CLI ${{ steps.check-version.outputs.tailwind_version }}.
+            2. Create `input.css` in your project:
+              ```css
+              @import 'tailwindcss';
+              ```
+            
+            3. Run it:
+              ```bash
+              go tool tailwindcss -i input.css -o output.css --watch
+              ```
           draft: false
           prerelease: false
         env:
