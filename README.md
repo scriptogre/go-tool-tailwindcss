@@ -22,10 +22,4 @@ go get -tool github.com/scriptogre/go-tool-tailwindcss@latest
    go tool tailwindcss -i input.css -o output.css --watch
    ```
 
-That's it! Downloads TailwindCSS automatically on first use (~100MB), then runs at native speed.
-
-## Notes
-
-- Downloaded TailwindCSS binary is cached in `~/.cache/go-tailwindcss/`
-- Works on Linux, macOS, and Windows (amd64/arm64)
-- Requires Go 1.21+ for installation
+That's it. `go tool` makes sure the TailwindCSS CLI is cached after the first run.
